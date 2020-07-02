@@ -121,3 +121,21 @@ class Device(object):
         """
         xcmd = self.api.form_command(commands=commands, **kwargs)
         return await self.api.post(xcmd, **kwargs)
+
+    async def get_config(self, ofmt) -> List[CommandResults]:
+        xmcd = self.api.form_command(commands=['show running-config'], ofmt=ofmt)
+        return await self.api.post(xmcd, ofmt=ofmt)
+
+    async def push_config(self, contents: str, enter_cmds=None, exit_cmds=None) -> List[CommandResults]:
+        config_cmds = contents.strip().splitlines()
+        if enter_cmds:
+            config_cmds[0:0] = enter_cmds
+        else:
+            config_cmds.insert(0, 'configure')
+
+        if exit_cmds:
+            config_cmds.extend(exit_cmds)
+
+        ofmt = 'text'
+        jsonrpc = self.api.form_command(commands=config_cmds, ofmt=ofmt)
+        return await self.api.post(jsonrpc=jsonrpc, ofmt=ofmt)
