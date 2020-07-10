@@ -1,4 +1,3 @@
-
 from typing import Optional, AnyStr, Tuple, List
 
 import json
@@ -64,41 +63,50 @@ class Transport(object):
         return cmd
 
     async def post(self, jsonrpc, ofmt=None):
-        res = await self.client.post("/command-api", data=json.dumps(jsonrpc))
+        res = await self.client.post("/command-api", json=jsonrpc)
         res.raise_for_status()
         body = res.json()
 
-        commands = jsonrpc['params']['cmds']
+        commands = jsonrpc["params"]["cmds"]
 
-        post_res = list()
+        if ofmt == "text":
 
-        if ofmt == 'text':
             def get_output(_cmd_r):
-                return _cmd_r['output']
+                return _cmd_r["output"]
+
         else:
+
             def get_output(_cmd_r):
                 return _cmd_r
 
-        if err_data := body.get('error'):
-            cmd_data = err_data['data']
-            len_data = len(cmd_data)
-            err_at = len_data - 1
-            err_msg = err_data['message']
+        if (err_data := body.get("error")) is None:
+            return [
+                CommandResults(
+                    ok=True, command=commands[cmd_i], output=get_output(cmd_res)
+                )
+                for cmd_i, cmd_res in enumerate(body["result"])
+            ]
 
-            for cmd_i, cmd in enumerate(commands[:err_at]):
-                post_res.append(CommandResults(ok=True, command=cmd, output=get_output(cmd_data[cmd_i])))
+        post_res = list()
+        cmd_data = err_data["data"]
+        len_data = len(cmd_data)
+        err_at = len_data - 1
+        err_msg = err_data["message"]
 
-            post_res.append(CommandResults(ok=False, command=commands[err_at], output=err_msg))
+        # commands the passed
+        for cmd_i, cmd in enumerate(commands[:err_at]):
+            post_res.append(
+                CommandResults(ok=True, command=cmd, output=get_output(cmd_data[cmd_i]))
+            )
 
-            for cmd in commands[err_at+1:]:
-                post_res.append(CommandResults(ok=False, command=cmd, output=None))
+        # the command that failed
+        post_res.append(
+            CommandResults(ok=False, command=commands[err_at], output=err_msg)
+        )
 
-            return post_res
-
-        post_res.extend([
-            CommandResults(ok=True, command=commands[cmd_i], output=get_output(cmd_res))
-            for cmd_i, cmd_res in enumerate(body['result'])
-        ])
+        # all other commands not executed
+        for cmd in commands[err_at + 1 :]:
+            post_res.append(CommandResults(ok=False, command=cmd, output=None))
 
         return post_res
 
@@ -110,32 +118,34 @@ class Device(object):
         creds: Tuple[str, str],
         proto: Optional[AnyStr] = "https",
         port=None,
+        private=None,
     ):
+        self.host = host
+        self.private = private
         self.api = Transport(host=host, creds=creds, proto=proto, port=port)
 
-    async def exec(
-        self, commands: List[AnyStr], **kwargs
-    ) -> List[CommandResults]:
+    async def exec(self, commands: List[AnyStr], **kwargs) -> List[CommandResults]:
         """
         Execute a list of operational commands and return the output as a list of CommandResults.
         """
         xcmd = self.api.form_command(commands=commands, **kwargs)
         return await self.api.post(xcmd, **kwargs)
 
-    async def get_config(self, ofmt) -> List[CommandResults]:
-        xmcd = self.api.form_command(commands=['show running-config'], ofmt=ofmt)
+    async def get_config(self, ofmt="text") -> List[CommandResults]:
+        xmcd = self.api.form_command(commands=["show running-config"], ofmt=ofmt)
         return await self.api.post(xmcd, ofmt=ofmt)
 
-    async def push_config(self, contents: str, enter_cmds=None, exit_cmds=None) -> List[CommandResults]:
+    async def push_config(
+        self, contents: str, enter_cmds=None, exit_cmds=None, ofmt="text"
+    ) -> List[CommandResults]:
         config_cmds = contents.strip().splitlines()
-        if enter_cmds:
-            config_cmds[0:0] = enter_cmds
+        if not enter_cmds:
+            config_cmds.insert(0, "configure")
         else:
-            config_cmds.insert(0, 'configure')
+            config_cmds[0:0] = enter_cmds
 
         if exit_cmds:
             config_cmds.extend(exit_cmds)
 
-        ofmt = 'text'
         jsonrpc = self.api.form_command(commands=config_cmds, ofmt=ofmt)
         return await self.api.post(jsonrpc=jsonrpc, ofmt=ofmt)
