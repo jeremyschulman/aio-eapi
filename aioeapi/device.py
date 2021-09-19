@@ -36,25 +36,29 @@ class EapiCommandError(RuntimeError):
 
 
 class Device(httpx.AsyncClient):
+    auth = None
     EAPI_OFMT_OPTIONS = ("json", "text")
     EAPI_DEFAULT_OFMT = "json"
 
     def __init__(
         self,
         host,
-        username: str,
-        password: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
         proto: Optional[str] = "https",
         port=None,
-        timeout=60,
+        **kwargs,
     ):
         port = port or getservbyname(proto)
-        super(Device, self).__init__(
-            base_url=httpx.URL(f"{proto}://{host}:{port}"),
-            verify=False,
-            timeout=httpx.Timeout(timeout),
+        kwargs.setdefault("verify", False)
+        kwargs.setdefault(
+            "auth", self.auth or httpx.BasicAuth(username=username, password=password)
         )
-        self.auth = (username, password)
+
+        super(Device, self).__init__(
+            base_url=httpx.URL(f"{proto}://{host}:{port}"), **kwargs
+        )
+
         self.headers["Content-Type"] = "application/json-rpc"
 
     async def cli(
