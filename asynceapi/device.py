@@ -1,6 +1,5 @@
 from typing import Optional, AnyStr, Tuple, List
 
-import json
 from socket import getservbyname
 import httpx
 import base64
