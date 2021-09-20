@@ -2,7 +2,7 @@
 # System Imports
 # -----------------------------------------------------------------------------
 
-from typing import Optional, List
+from typing import Optional, List, Union, Dict, AnyStr
 from socket import getservbyname
 
 # -----------------------------------------------------------------------------
@@ -20,8 +20,20 @@ __all__ = ["Device"]
 
 
 class EapiCommandError(RuntimeError):
+    """
+    Exception class for EAPI command errors
+
+    Attributes
+    ----------
+    failed: str - the failed command
+    errmsg: str - a description of the failure reason
+    passed: List[dict] - a list of command results of the commands that passed
+    not_exec: List[str] - a list of commands that were not executed
+    """
+
     def __init__(self, failed, errmsg, passed, not_exec):
-        self.failed = (failed,)
+        """Initializer for the EapiCommandError exception"""
+        self.failed = failed
         self.errmsg = errmsg
         self.passed = passed
         self.not_exec = not_exec
@@ -36,19 +48,60 @@ class EapiCommandError(RuntimeError):
 
 
 class Device(httpx.AsyncClient):
+    """
+    The Device class represents the async JSON-RPC client that communicates with
+    an Arista EOS device.  This class inherits directly from the
+    httpx.AsyncClient, so any initialization options can be passed directly.
+    """
+
     auth = None
     EAPI_OFMT_OPTIONS = ("json", "text")
     EAPI_DEFAULT_OFMT = "json"
 
     def __init__(
         self,
-        host,
+        host: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
         proto: Optional[str] = "https",
         port=None,
         **kwargs,
     ):
+        """
+        Initializes the Device class.  As a subclass to httpx.AsyncClient, the
+        Caller can provide any of those initializers.  Specific paramertes for
+        Device class are all optional and described below.
+
+        Parameters
+        ----------
+        host: Optional[str]
+            The EOS target device, either hostname (DNS) or ipaddress.
+
+        username: Optional[str]
+            The login user-name; requires the password parameter.
+
+        password: Optional[str]
+            The login password; requires the username parameter.
+
+        proto: Optional[str]
+            The protocol, http or https, to communicate eAPI with the device.
+
+        port: Optional[Union[str,int]]
+            If not provided, the proto value is used to lookup the associated
+            port (http=80, https=443).  If provided, overrides the port used to
+            communite with the device.
+
+        Other Parameters
+        ----------------
+        base_url: str
+            If provided, the complete URL to the device eAPI endpoint.
+
+        auth:
+            If provided, used as the httpx authorization initializer value. If
+            not provided, then username+password is assumed by the Caller and
+            used to create a BasicAuth instance.
+        """
+
         port = port or getservbyname(proto)
         kwargs.setdefault("base_url", httpx.URL(f"{proto}://{host}:{port}"))
         kwargs.setdefault("verify", False)
@@ -109,6 +162,8 @@ class Device(httpx.AsyncClient):
         return res[0] if command else res
 
     def jsoncrpc_command(self, commands, **kwargs) -> dict:
+        """Used to create the JSON-RPC command dictionary object"""
+
         cmd = {
             "jsonrpc": "2.0",
             "method": "runCmds",
@@ -127,7 +182,25 @@ class Device(httpx.AsyncClient):
 
         return cmd
 
-    async def jsonrpc_exec(self, jsonrpc: dict):
+    async def jsonrpc_exec(self, jsonrpc: dict) -> List[Union[Dict, AnyStr]]:
+        """
+        Execute the JSON-RPC dictionary object.
+
+        Parameters
+        ----------
+        jsonrpc: dict
+            The JSON-RPC as created by the `meth`:jsonrpc_command().
+
+        Raises
+        ------
+        EapiCommandError
+            In the event that a command resulted in an error response.
+
+        Returns
+        -------
+        The list of command results; either dict or text depending on the
+        JSON-RPC format pameter.
+        """
         res = await self.post("/command-api", json=jsonrpc)
         res.raise_for_status()
         body = res.json()
@@ -135,15 +208,7 @@ class Device(httpx.AsyncClient):
         commands = jsonrpc["params"]["cmds"]
         ofmt = jsonrpc["params"]["format"]
 
-        if ofmt == "text":
-
-            def get_output(_cmd_r):
-                return _cmd_r["output"]
-
-        else:
-
-            def get_output(_cmd_r):
-                return _cmd_r
+        get_output = (lambda _r: _r["output"]) if ofmt == "text" else (lambda _r: _r)
 
         # if there are no errors then return the list of command results.
 
