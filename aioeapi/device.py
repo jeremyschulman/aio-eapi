@@ -50,15 +50,11 @@ class Device(httpx.AsyncClient):
         **kwargs,
     ):
         port = port or getservbyname(proto)
+        kwargs.setdefault("base_url", httpx.URL(f"{proto}://{host}:{port}"))
         kwargs.setdefault("verify", False)
-        kwargs.setdefault(
-            "auth", self.auth or httpx.BasicAuth(username=username, password=password)
-        )
+        kwargs.setdefault("auth", self.auth or httpx.BasicAuth(username, password))
 
-        super(Device, self).__init__(
-            base_url=httpx.URL(f"{proto}://{host}:{port}"), **kwargs
-        )
-
+        super(Device, self).__init__(**kwargs)
         self.headers["Content-Type"] = "application/json-rpc"
 
     async def cli(
