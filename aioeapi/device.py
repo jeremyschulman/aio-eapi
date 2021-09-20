@@ -112,8 +112,8 @@ class Device(httpx.AsyncClient):
 
     async def cli(
         self,
-        command: Optional[str] = None,
-        commands: Optional[List[str]] = None,
+        command: Optional[AnyStr] = None,
+        commands: Optional[List[AnyStr]] = None,
         **kwargs,
     ):
         """
