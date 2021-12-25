@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 # System Imports
 # -----------------------------------------------------------------------------
-
+import asyncio
 from typing import Optional, List, Union, Dict, AnyStr
 from socket import getservbyname
 
@@ -102,8 +102,9 @@ class Device(httpx.AsyncClient):
             used to create a BasicAuth instance.
         """
 
-        port = port or getservbyname(proto)
-        kwargs.setdefault("base_url", httpx.URL(f"{proto}://{host}:{port}"))
+        self.port = port or getservbyname(proto)
+        self.host = host
+        kwargs.setdefault("base_url", httpx.URL(f"{proto}://{self.host}:{self.port}"))
         kwargs.setdefault("verify", False)
 
         if username and password:
@@ -113,6 +114,23 @@ class Device(httpx.AsyncClient):
 
         super(Device, self).__init__(**kwargs)
         self.headers["Content-Type"] = "application/json-rpc"
+
+    async def check_connection(self) -> bool:
+        """
+        This function checks the target device to ensure that the eAPI port is
+        open and accepting connections.  It is recommended that a Caller checks
+        the connection before involing cli commands, but this step is not
+        required.
+
+        Returns
+        -------
+        True when the device eAPI is accessible, False otherwise.
+        """
+        try:
+            await asyncio.open_connection(self.host, port=self.port)
+        except OSError:
+            return False
+        return True
 
     async def cli(
         self,
