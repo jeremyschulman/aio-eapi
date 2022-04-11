@@ -12,32 +12,17 @@ from socket import getservbyname
 import httpx
 
 # -----------------------------------------------------------------------------
+# Private Imports
+# -----------------------------------------------------------------------------
+
+from .errors import EapiCommandError
+
+# -----------------------------------------------------------------------------
 # Exports
 # -----------------------------------------------------------------------------
 
 
 __all__ = ["Device"]
-
-
-class EapiCommandError(RuntimeError):
-    """
-    Exception class for EAPI command errors
-
-    Attributes
-    ----------
-    failed: str - the failed command
-    errmsg: str - a description of the failure reason
-    passed: List[dict] - a list of command results of the commands that passed
-    not_exec: List[str] - a list of commands that were not executed
-    """
-
-    def __init__(self, failed, errmsg, passed, not_exec):
-        """Initializer for the EapiCommandError exception"""
-        self.failed = failed
-        self.errmsg = errmsg
-        self.passed = passed
-        self.not_exec = not_exec
-        super(EapiCommandError, self).__init__()
 
 
 # -----------------------------------------------------------------------------
@@ -136,6 +121,8 @@ class Device(httpx.AsyncClient):
         self,
         command: Optional[AnyStr] = None,
         commands: Optional[List[AnyStr]] = None,
+        ofmt: Optional[str] = None,
+        suppress_error: Optional[bool] = False,
         **kwargs,
     ):
         """
@@ -149,15 +136,26 @@ class Device(httpx.AsyncClient):
         commands: List[str]
             A list of commands to executes; results in a list of output responses
 
-        Other Parameters
-        ----------------
         ofmt: str
             Either 'json' or 'text'; indicates the output fromat for the CLI commands.
+
+        suppress_error: Optional[bool] = False
+            When not False, then if the execution of the command would-have
+            raised an EapiCommandError, rather than raising this exception this
+            routine will return the value None.
+
+            For example, if the following command would have raised
+            EapiCommandError, now response would be set to None instead.
+
+                response = dev.cli(..., suppress_error=True)
+
+        Other Parameters
+        ----------------
 
         autoComplete: Optional[bool] = False
             Enabled/disables the command auto-compelete feature of the EAPI.  Per the
             documentation:
-                Allows users to use short hand commands in eAPI calls. With this
+                Allows users to use shorthand commands in eAPI calls. With this
                 parameter included a user can send 'sh ver' via eAPI to get the
                 output of 'show version'.
 
@@ -178,12 +176,18 @@ class Device(httpx.AsyncClient):
             raise RuntimeError("Required 'command' or 'commands'")
 
         jsonrpc = self.jsoncrpc_command(
-            commands=[command] if command else commands, **kwargs
+            commands=[command] if command else commands, ofmt=ofmt, **kwargs
         )
-        res = await self.jsonrpc_exec(jsonrpc)
-        return res[0] if command else res
 
-    def jsoncrpc_command(self, commands, **kwargs) -> dict:
+        try:
+            res = await self.jsonrpc_exec(jsonrpc)
+            return res[0] if command else res
+        except EapiCommandError as eapi_error:
+            if suppress_error:
+                return None
+            raise eapi_error
+
+    def jsoncrpc_command(self, commands, ofmt, **kwargs) -> dict:
         """Used to create the JSON-RPC command dictionary object"""
 
         cmd = {
@@ -192,7 +196,7 @@ class Device(httpx.AsyncClient):
             "params": {
                 "version": 1,
                 "cmds": commands,
-                "format": kwargs.get("ofmt") or self.EAPI_DEFAULT_OFMT,
+                "format": ofmt or self.EAPI_DEFAULT_OFMT,
             },
             "id": str(kwargs.get("req_id") or id(self)),
         }
