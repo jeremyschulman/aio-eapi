@@ -4,6 +4,11 @@ version = "0.4.0"
 description = "Arista EOS API asyncio client"
 readme = "README.md"
 authors = ["Jeremy Schulman"]
+packages = [
+    { include  = 'aioeapi' },
+    { include = 'asynceapi' }
+
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
