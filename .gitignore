@@ -106,3 +106,4 @@ venv.bak/
 failures.csv
 
 .idea/
+poetry.lock

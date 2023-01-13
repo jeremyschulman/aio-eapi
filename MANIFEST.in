@@ -1,3 +1,0 @@
-include LICENSE README.rst VERSION tox.ini
-include requirements*.txt
-recursive-include tests
