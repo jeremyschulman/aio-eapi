@@ -1,9 +1,41 @@
-[tool.black]
-target-version = ['py38']
+[tool.poetry]
+name = "aio-eapi"
+version = "0.4.0"
+description = "Arista EOS API asyncio client"
+readme = "README.md"
+authors = ["Jeremy Schulman"]
+packages = [
+    { include  = 'aioeapi' },
+    { include = 'asynceapi' }
+
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+httpx = "^0.23.3"
+
+
+[tool.poetry.dev-dependencies]
+    pytest = "*"
+    invoke = "*"
+    black = "*"
+    flake8 = "*"
+    flake8-breakpoint = "*"
+    pytest-cov = "*"
+    pytest-asyncio = "*"
+    pre-commit = "*"
+    interrogate = "*"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.interrogate]
     fail-under = 0
     verbose = 1
     color = true
     ignore-module = true
-    exclude = ["setup.py", "tasks.py"]
+    exclude = ["examples", "build", "venv"]
+
+

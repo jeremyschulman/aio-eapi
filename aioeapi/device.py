@@ -123,6 +123,7 @@ class Device(httpx.AsyncClient):
         commands: Optional[List[AnyStr]] = None,
         ofmt: Optional[str] = None,
         suppress_error: Optional[bool] = False,
+        version: Optional[Union[int, str]] = "latest",
         **kwargs,
     ):
         """
@@ -149,9 +150,15 @@ class Device(httpx.AsyncClient):
 
                 response = dev.cli(..., suppress_error=True)
 
+        version: Optional[int | string]
+            By default the eAPI will use "version 1" for all API object models.
+            This driver will, by default, always set version to "latest" so
+            that the behavior matches the CLI of the device.  The caller can
+            override the "latest" behavior by explicity setting the version.
+
+
         Other Parameters
         ----------------
-
         autoComplete: Optional[bool] = False
             Enabled/disables the command auto-compelete feature of the EAPI.  Per the
             documentation:
@@ -176,7 +183,10 @@ class Device(httpx.AsyncClient):
             raise RuntimeError("Required 'command' or 'commands'")
 
         jsonrpc = self.jsoncrpc_command(
-            commands=[command] if command else commands, ofmt=ofmt, **kwargs
+            commands=[command] if command else commands,
+            ofmt=ofmt,
+            version=version,
+            **kwargs,
         )
 
         try:
@@ -187,14 +197,14 @@ class Device(httpx.AsyncClient):
                 return None
             raise eapi_error
 
-    def jsoncrpc_command(self, commands, ofmt, **kwargs) -> dict:
+    def jsoncrpc_command(self, commands, ofmt, version, **kwargs) -> dict:
         """Used to create the JSON-RPC command dictionary object"""
 
         cmd = {
             "jsonrpc": "2.0",
             "method": "runCmds",
             "params": {
-                "version": 1,
+                "version": version,
                 "cmds": commands,
                 "format": ofmt or self.EAPI_DEFAULT_OFMT,
             },
