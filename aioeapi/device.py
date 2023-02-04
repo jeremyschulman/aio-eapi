@@ -1,6 +1,7 @@
 # -----------------------------------------------------------------------------
 # System Imports
 # -----------------------------------------------------------------------------
+
 import asyncio
 from typing import Optional, List, Union, Dict, AnyStr
 from socket import getservbyname
@@ -72,7 +73,7 @@ class Device(httpx.AsyncClient):
             The protocol, http or https, to communicate eAPI with the device.
 
         port: Optional[Union[str,int]]
-            If not provided, the proto value is used to lookup the associated
+            If not provided, the proto value is used to look up the associated
             port (http=80, https=443).  If provided, overrides the port used to
             communite with the device.
 
@@ -135,7 +136,7 @@ class Device(httpx.AsyncClient):
             A single command to execute; results in a single output response
 
         commands: List[str]
-            A list of commands to executes; results in a list of output responses
+            A list of commands to execute; results in a list of output responses
 
         ofmt: str
             Either 'json' or 'text'; indicates the output fromat for the CLI commands.
@@ -145,7 +146,7 @@ class Device(httpx.AsyncClient):
             raised an EapiCommandError, rather than raising this exception this
             routine will return the value None.
 
-            For example, if the following command would have raised
+            For example, if the following command had raised
             EapiCommandError, now response would be set to None instead.
 
                 response = dev.cli(..., suppress_error=True)

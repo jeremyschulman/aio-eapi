@@ -32,3 +32,12 @@ async def run_test(host):
     res = await dev.cli(commands=['show hostname', 'show version'])
     json.dumps(res)
 ```
+
+### References
+
+Arista eAPI documents require an Arista Portal customer login.  Once logged into the
+system you can find the documents in the Software Download area.  Select an EOS release
+and then select the Docs folder.
+
+You can also take a look at the Arista community client, [here](https://github.com/arista-eosplus/pyeapi).
+
