@@ -1,15 +1,39 @@
-from typing import Optional
-from .device import Device
+# -----------------------------------------------------------------------------
+# System Imports
+# -----------------------------------------------------------------------------
+
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .device import Device
+
+# -----------------------------------------------------------------------------
+# Exports
+# -----------------------------------------------------------------------------
+
+__all__ = ["ConfigSession"]
+
+# -----------------------------------------------------------------------------
+#
+#                                 CODE BEGINS
+#
+# -----------------------------------------------------------------------------
 
 
-class SessionConfig:
+class ConfigSession:
     """
-    The SessionConfig instance is used to send configuration to a device using
+    The ConfigSession instance is used to send configuration to a device using
     the EOS session mechanism.  This is the preferred way of managing
     configuraiton changes.
+
+    Notes
+    -----
+    This class definition is used by the parent Device class definition as
+    defined by `config_session`.  A Caller can use the ConfigSession directly
+    as well, but it is not required.
     """
 
-    def __init__(self, device: Device, name: str):
+    def __init__(self, device: "Device", name: str):
         """
         Creates a new instance of the session config instance bound
         to the given device instance, and using the session `name`.
@@ -37,7 +61,7 @@ class SessionConfig:
         return self._name
 
     @property
-    def device(self) -> Device:
+    def device(self) -> "Device":
         """returns read-only device instance attribute"""
         return self._device
 

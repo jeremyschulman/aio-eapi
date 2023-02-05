@@ -1,3 +1,3 @@
 from .device import Device
 from .errors import EapiCommandError
-from .config import SessionConfig
+from .config import ConfigSession

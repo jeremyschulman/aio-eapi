@@ -17,6 +17,7 @@ import httpx
 # -----------------------------------------------------------------------------
 
 from .errors import EapiCommandError
+from .config import ConfigSession
 
 # -----------------------------------------------------------------------------
 # Exports
@@ -272,3 +273,15 @@ class Device(httpx.AsyncClient):
             errmsg=err_msg,
             not_exec=commands[err_at + 1 :],
         )
+
+    def config_session(self, name: str) -> ConfigSession:
+        """
+        Factory method that returns a ConfigSession instance bound to this
+        device with the given session name
+
+        Parameters
+        ----------
+        name:
+            The config-session name
+        """
+        return ConfigSession(self, name)
