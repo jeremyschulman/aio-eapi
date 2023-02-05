@@ -17,7 +17,7 @@ import httpx
 # -----------------------------------------------------------------------------
 
 from .errors import EapiCommandError
-from .config import ConfigSession
+from .config_session import SessionConfig
 
 # -----------------------------------------------------------------------------
 # Exports
@@ -253,11 +253,11 @@ class Device(httpx.AsyncClient):
         if (err_data := body.get("error")) is None:
             return [get_output(cmd_res) for cmd_res in body["result"]]
 
-        # ----------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # if we are here, then there were some command errors.  Raise a
-        # RuntimeError exception with args (commands that failed, passed,
+        # EapiCommandError exception with args (commands that failed, passed,
         # not-executed).
-        # ----------------------------------------------------------------
+        # ---------------------------------------------------------------------
 
         cmd_data = err_data["data"]
         len_data = len(cmd_data)
@@ -274,14 +274,14 @@ class Device(httpx.AsyncClient):
             not_exec=commands[err_at + 1 :],
         )
 
-    def config_session(self, name: str) -> ConfigSession:
+    def config_session(self, name: str) -> SessionConfig:
         """
-        Factory method that returns a ConfigSession instance bound to this
-        device with the given session name
+        Factory method that returns a SessionConfig instance bound to this
+        device with the given session name.
 
         Parameters
         ----------
         name:
             The config-session name
         """
-        return ConfigSession(self, name)
+        return SessionConfig(self, name)

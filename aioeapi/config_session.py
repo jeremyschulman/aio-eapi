@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 # Exports
 # -----------------------------------------------------------------------------
 
-__all__ = ["ConfigSession"]
+__all__ = ["SessionConfig"]
 
 # -----------------------------------------------------------------------------
 #
@@ -20,16 +20,16 @@ __all__ = ["ConfigSession"]
 # -----------------------------------------------------------------------------
 
 
-class ConfigSession:
+class SessionConfig:
     """
-    The ConfigSession instance is used to send configuration to a device using
+    The SessionConfig instance is used to send configuration to a device using
     the EOS session mechanism.  This is the preferred way of managing
     configuraiton changes.
 
     Notes
     -----
     This class definition is used by the parent Device class definition as
-    defined by `config_session`.  A Caller can use the ConfigSession directly
+    defined by `config_session`.  A Caller can use the SessionConfig directly
     as well, but it is not required.
     """
 
@@ -130,7 +130,7 @@ class ConfigSession:
         res = await self.status_all()
         return res["sessions"].get(self.name)
 
-    async def push(self, content: list[str], replace: Optional[bool] = False):
+    async def push(self, content: list[str] | str, replace: Optional[bool] = False):
         """
         Sends the configuration content to the device.  If `replace` is true,
         then the command "rollback clean-config" is issued before sendig the
@@ -138,20 +138,35 @@ class ConfigSession:
 
         Parameters
         ----------
-        content: list[str]
+        content: list[str] | str
             The text configuration CLI commands, as a list of strings, that
-            will be sent to the device.
+            will be sent to the device.  If the parameter is a string, and not
+            a list, then split the string across linebreaks.  In either case
+            any empty lines will be discarded before they are send to the
+            device.
 
         replace: bool
             When True, the content will replace the existing configuration
             on the device.
-
-        Returns
-        -------
         """
-        commands = [self._cli_config_session, *content]
+
+        # if given s string, we need to break it up into individual command
+        # lines.
+
+        if isinstance(content, str):
+            content = content.splitlines()
+
+        # prepare the initial set of command to enter the config session and
+        # rollback clean if the `replace` argument is True.
+
+        commands = [self._cli_config_session]
         if replace:
-            commands.insert(1, "rollback clean-config")
+            commands.append("rollback clean-config")
+
+        # add the Caller's commands, filtering out any blank lines. any command
+        # lines (!) are still included.
+
+        commands.extend(filter(None, content))
 
         await self._cli(commands=commands)
 
@@ -166,11 +181,10 @@ class ConfigSession:
         session before the timer expires; otherwise the config-session is
         automatically aborted.
         """
-        command = (
-            f"{self._cli_config_session} commit timer {timer}"
-            if timer
-            else f"{self._cli_config_session} commit timer"
-        )
+        command = f"{self._cli_config_session} commit"
+
+        if timer:
+            command += f" timer {timer}"
 
         await self._cli(command)
 
