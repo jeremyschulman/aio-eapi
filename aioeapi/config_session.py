@@ -33,6 +33,8 @@ class SessionConfig:
     as well, but it is not required.
     """
 
+    CLI_CFG_FACTORY_RESET = "rollback clean-config"
+
     def __init__(self, device: "Device", name: str):
         """
         Creates a new instance of the session config instance bound
@@ -161,7 +163,7 @@ class SessionConfig:
 
         commands = [self._cli_config_session]
         if replace:
-            commands.append("rollback clean-config")
+            commands.append(self.CLI_CFG_FACTORY_RESET)
 
         # add the Caller's commands, filtering out any blank lines. any command
         # lines (!) are still included.
@@ -212,6 +214,28 @@ class SessionConfig:
         return await self._cli(
             f"show session-config named {self.name} diffs", ofmt="text"
         )
+
+    async def load_scp_file(self, filename: str, replace: Optional[bool] = False):
+        """
+        This function is used to load the configuration from flash:<filename>
+        into the session configuration.  If the replace parameter is True then
+        the file contents will replace the existing session config
+        (load-replace).
+
+        Parameters
+        ----------
+        filename:
+            The name of the configuration file without the "flash:" prefix.
+
+        replace:
+            When True, the contents of the file will completely replace the
+            session config for a load-replace behavior.
+        """
+        commands = [self._cli_config_session]
+        if replace:
+            commands.append(self.CLI_CFG_FACTORY_RESET)
+        commands.append(f"copy flash:{filename} session-config")
+        await self._cli(commands=commands)
 
     async def write(self):
         """
