@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 # System Imports
 # -----------------------------------------------------------------------------
-
+import re
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -217,25 +217,37 @@ class SessionConfig:
 
     async def load_scp_file(self, filename: str, replace: Optional[bool] = False):
         """
-        This function is used to load the configuration from flash:<filename>
-        into the session configuration.  If the replace parameter is True then
-        the file contents will replace the existing session config
-        (load-replace).
+        This function is used to load the configuration from <filename> into
+        the session configuration.  If the replace parameter is True then the
+        file contents will replace the existing session config (load-replace).
 
         Parameters
         ----------
         filename:
-            The name of the configuration file without the "flash:" prefix.
+            The name of the configuration file.  The caller is required to
+            specify the filesystem, for exmaple, the
+            filename="flash:thisfile.cfg"
 
         replace:
             When True, the contents of the file will completely replace the
             session config for a load-replace behavior.
+
+        Raises
+        -------
+        If there are any issues with loading the configuration file then a
+        RuntimeError is raised with the error messages content.
         """
         commands = [self._cli_config_session]
         if replace:
             commands.append(self.CLI_CFG_FACTORY_RESET)
-        commands.append(f"copy flash:{filename} session-config")
-        await self._cli(commands=commands)
+
+        commands.append(f"copy {filename} session-config")
+        res = await self._cli(commands=commands)
+        checks_re = re.compile(r"error|abort|invalid", flags=re.I)
+        messages = res[-1]["messages"]
+
+        if any(map(checks_re.search, messages)):
+            raise RuntimeError("".join(messages))
 
     async def write(self):
         """
