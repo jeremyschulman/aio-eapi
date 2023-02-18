@@ -13,13 +13,17 @@ class EapiCommandError(RuntimeError):
     not_exec: List[str] - a list of commands that were not executed
     """
 
-    def __init__(self, failed, errmsg, passed, not_exec):
+    def __init__(self, failed: str, errmsg: str, passed, not_exec):
         """Initializer for the EapiCommandError exception"""
         self.failed = failed
         self.errmsg = errmsg
         self.passed = passed
         self.not_exec = not_exec
         super(EapiCommandError, self).__init__()
+
+    def __str__(self):
+        """returns the error message associated with the exception"""
+        return self.errmsg
 
 
 # alias for exception during sending-receiving

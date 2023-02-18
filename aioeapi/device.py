@@ -1,6 +1,7 @@
 # -----------------------------------------------------------------------------
 # System Imports
 # -----------------------------------------------------------------------------
+
 import asyncio
 from typing import Optional, List, Union, Dict, AnyStr
 from socket import getservbyname
@@ -16,6 +17,7 @@ import httpx
 # -----------------------------------------------------------------------------
 
 from .errors import EapiCommandError
+from .config_session import SessionConfig
 
 # -----------------------------------------------------------------------------
 # Exports
@@ -72,7 +74,7 @@ class Device(httpx.AsyncClient):
             The protocol, http or https, to communicate eAPI with the device.
 
         port: Optional[Union[str,int]]
-            If not provided, the proto value is used to lookup the associated
+            If not provided, the proto value is used to look up the associated
             port (http=80, https=443).  If provided, overrides the port used to
             communite with the device.
 
@@ -135,7 +137,7 @@ class Device(httpx.AsyncClient):
             A single command to execute; results in a single output response
 
         commands: List[str]
-            A list of commands to executes; results in a list of output responses
+            A list of commands to execute; results in a list of output responses
 
         ofmt: str
             Either 'json' or 'text'; indicates the output fromat for the CLI commands.
@@ -145,7 +147,7 @@ class Device(httpx.AsyncClient):
             raised an EapiCommandError, rather than raising this exception this
             routine will return the value None.
 
-            For example, if the following command would have raised
+            For example, if the following command had raised
             EapiCommandError, now response would be set to None instead.
 
                 response = dev.cli(..., suppress_error=True)
@@ -251,11 +253,11 @@ class Device(httpx.AsyncClient):
         if (err_data := body.get("error")) is None:
             return [get_output(cmd_res) for cmd_res in body["result"]]
 
-        # ----------------------------------------------------------------
+        # ---------------------------------------------------------------------
         # if we are here, then there were some command errors.  Raise a
-        # RuntimeError exception with args (commands that failed, passed,
+        # EapiCommandError exception with args (commands that failed, passed,
         # not-executed).
-        # ----------------------------------------------------------------
+        # ---------------------------------------------------------------------
 
         cmd_data = err_data["data"]
         len_data = len(cmd_data)
@@ -271,3 +273,15 @@ class Device(httpx.AsyncClient):
             errmsg=err_msg,
             not_exec=commands[err_at + 1 :],
         )
+
+    def config_session(self, name: str) -> SessionConfig:
+        """
+        Factory method that returns a SessionConfig instance bound to this
+        device with the given session name.
+
+        Parameters
+        ----------
+        name:
+            The config-session name
+        """
+        return SessionConfig(self, name)
