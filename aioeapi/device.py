@@ -2,7 +2,6 @@
 # System Imports
 # -----------------------------------------------------------------------------
 
-import asyncio
 from typing import Optional, List, Union, Dict, AnyStr
 from socket import getservbyname
 
@@ -16,6 +15,7 @@ import httpx
 # Private Imports
 # -----------------------------------------------------------------------------
 
+from .aio_portcheck import port_check_url
 from .errors import EapiCommandError
 from .config_session import SessionConfig
 
@@ -113,11 +113,7 @@ class Device(httpx.AsyncClient):
         -------
         True when the device eAPI is accessible, False otherwise.
         """
-        try:
-            await asyncio.open_connection(self.host, port=self.port)
-        except OSError:
-            return False
-        return True
+        return await port_check_url(self.base_url)
 
     async def cli(
         self,
