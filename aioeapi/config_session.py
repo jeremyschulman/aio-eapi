@@ -2,7 +2,7 @@
 # System Imports
 # -----------------------------------------------------------------------------
 import re
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from .device import Device
@@ -83,7 +83,7 @@ class SessionConfig:
         """
         return await self._cli("show configuration sessions detail")
 
-    async def status(self) -> dict | None:
+    async def status(self) -> Union[dict, None]:
         """
         Get the status of the session config by running the command:
             # show configuration sessions detail
@@ -132,7 +132,7 @@ class SessionConfig:
         res = await self.status_all()
         return res["sessions"].get(self.name)
 
-    async def push(self, content: list[str] | str, replace: Optional[bool] = False):
+    async def push(self, content: Union[list[str], str], replace: Optional[bool] = False):
         """
         Sends the configuration content to the device.  If `replace` is true,
         then the command "rollback clean-config" is issued before sendig the
