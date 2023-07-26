@@ -2,7 +2,7 @@
 # System Imports
 # -----------------------------------------------------------------------------
 import re
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING, Union, List
 
 if TYPE_CHECKING:
     from .device import Device
@@ -132,7 +132,7 @@ class SessionConfig:
         res = await self.status_all()
         return res["sessions"].get(self.name)
 
-    async def push(self, content: Union[list[str], str], replace: Optional[bool] = False):
+    async def push(self, content: Union[List[str], str], replace: Optional[bool] = False):
         """
         Sends the configuration content to the device.  If `replace` is true,
         then the command "rollback clean-config" is issued before sendig the
@@ -140,7 +140,7 @@ class SessionConfig:
 
         Parameters
         ----------
-        content: list[str] | str
+        content: Union[List[str], str]
             The text configuration CLI commands, as a list of strings, that
             will be sent to the device.  If the parameter is a string, and not
             a list, then split the string across linebreaks.  In either case
