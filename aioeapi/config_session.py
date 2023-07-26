@@ -132,7 +132,9 @@ class SessionConfig:
         res = await self.status_all()
         return res["sessions"].get(self.name)
 
-    async def push(self, content: Union[List[str], str], replace: Optional[bool] = False):
+    async def push(
+        self, content: Union[List[str], str], replace: Optional[bool] = False
+    ):
         """
         Sends the configuration content to the device.  If `replace` is true,
         then the command "rollback clean-config" is issued before sendig the
