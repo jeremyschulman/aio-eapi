@@ -2,7 +2,9 @@
 # System Imports
 # -----------------------------------------------------------------------------
 
-from typing import Optional, List, Union, Dict, AnyStr
+from __future__ import annotations
+
+from typing import Optional, Union, AnyStr
 from socket import getservbyname
 
 # -----------------------------------------------------------------------------
@@ -118,7 +120,7 @@ class Device(httpx.AsyncClient):
     async def cli(
         self,
         command: Optional[AnyStr] = None,
-        commands: Optional[List[AnyStr]] = None,
+        commands: Optional[list[AnyStr]] = None,
         ofmt: Optional[str] = None,
         suppress_error: Optional[bool] = False,
         version: Optional[Union[int, str]] = "latest",
@@ -216,7 +218,7 @@ class Device(httpx.AsyncClient):
 
         return cmd
 
-    async def jsonrpc_exec(self, jsonrpc: dict) -> List[Union[Dict, AnyStr]]:
+    async def jsonrpc_exec(self, jsonrpc: dict) -> list[Union[dict, AnyStr]]:
         """
         Execute the JSON-RPC dictionary object.
 
@@ -265,9 +267,10 @@ class Device(httpx.AsyncClient):
                 get_output(cmd_data[cmd_i])
                 for cmd_i, cmd in enumerate(commands[:err_at])
             ],
-            failed=commands[err_at],
+            failed=commands[err_at]["cmd"],
+            errors=cmd_data[err_at]["errors"],
             errmsg=err_msg,
-            not_exec=commands[err_at + 1 :],
+            not_exec=commands[err_at + 1 :],  # noqa: E203
         )
 
     def config_session(self, name: str) -> SessionConfig:

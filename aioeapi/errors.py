@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 import httpx
+
+from typing import Union, Any
 
 
 class EapiCommandError(RuntimeError):
@@ -13,15 +17,24 @@ class EapiCommandError(RuntimeError):
     not_exec: List[str] - a list of commands that were not executed
     """
 
-    def __init__(self, failed: str, errmsg: str, passed, not_exec):
+    # pylint: disable=too-many-arguments
+    def __init__(
+        self,
+        failed: str,
+        errors: list[str],
+        errmsg: str,
+        passed: list[Union[str, dict[str, Any]]],
+        not_exec: list[dict[str, Any]],
+    ):
         """Initializer for the EapiCommandError exception"""
         self.failed = failed
+        self.errors = errors
         self.errmsg = errmsg
         self.passed = passed
         self.not_exec = not_exec
-        super(EapiCommandError, self).__init__()
+        super().__init__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """returns the error message associated with the exception"""
         return self.errmsg
 
