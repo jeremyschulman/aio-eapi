@@ -18,7 +18,6 @@ class EapiCommandError(RuntimeError):
     not_exec: list[str] - a list of commands that were not executed
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(self, failed: str, errors: list[str], errmsg: str, passed: list[str | dict[str, Any]], not_exec: list[dict[str, Any]]):
         """Initializer for the EapiCommandError exception"""
         self.failed = failed

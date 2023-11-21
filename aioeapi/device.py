@@ -277,7 +277,7 @@ class Device(httpx.AsyncClient):
             failed=commands[err_at]["cmd"],
             errors=cmd_data[err_at]["errors"],
             errmsg=err_msg,
-            not_exec=commands[err_at + 1 :],  # noqa: E203
+            not_exec=commands[err_at + 1 :],
         )
 
     def config_session(self, name: str) -> SessionConfig:
