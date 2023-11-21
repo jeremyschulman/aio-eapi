@@ -218,7 +218,7 @@ class Device(httpx.AsyncClient):
 
         return cmd
 
-    async def jsonrpc_exec(self, jsonrpc: dict) -> list[Union[dict, AnyStr]]:
+    async def jsonrpc_exec(self, jsonrpc: dict) -> list[dict | AnyStr]:
         """
         Execute the JSON-RPC dictionary object.
 
@@ -247,7 +247,6 @@ class Device(httpx.AsyncClient):
         get_output = (lambda _r: _r["output"]) if ofmt == "text" else (lambda _r: _r)
 
         # if there are no errors then return the list of command results.
-
         if (err_data := body.get("error")) is None:
             return [get_output(cmd_res) for cmd_res in body["result"]]
 
@@ -257,16 +256,24 @@ class Device(httpx.AsyncClient):
         # not-executed).
         # ---------------------------------------------------------------------
 
+        # -------------------------- eAPI specification ----------------------
+        # On an error, no result object is present, only an error object, which
+        # is guaranteed to have the following attributes: code, messages, and
+        # data. Similar to the result object in the successful response, the
+        # data object is a list of objects corresponding to the results of all
+        # commands up to, and including, the failed command. If there was a an
+        # error before any commands were executed (e.g. bad credentials), data
+        # will be empty. The last object in the data array will always
+        # correspond to the failed command. The command failure details are
+        # always stored in the errors array.
+
         cmd_data = err_data["data"]
         len_data = len(cmd_data)
         err_at = len_data - 1
         err_msg = err_data["message"]
 
         raise EapiCommandError(
-            passed=[
-                get_output(cmd_data[cmd_i])
-                for cmd_i, cmd in enumerate(commands[:err_at])
-            ],
+            passed=[get_output(cmd_data[cmd_i]) for cmd_i, cmd in enumerate(commands[:err_at])],
             failed=commands[err_at]["cmd"],
             errors=cmd_data[err_at]["errors"],
             errmsg=err_msg,
