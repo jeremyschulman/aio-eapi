@@ -14,7 +14,8 @@ following initialization parameters:
    * `username` - The login username
    * `password` - The login password
    * `proto` - *(Optional)* Choose either "https" or "http", defaults to "https"
-   * `port` - *(Optional)* Chose the protocol port to override proto default
+   * `port` - *(Optional)* Choose the protocol port to override proto default
+   * `timeout` - *(Optional)* Specify how long to wait for commands to be run, defaults to 5 seconds
 
 The Device class inherits directly from httpx.AsyncClient.  As such, the Caller
 can provide any initialization parameters.  The above specific parameters are
