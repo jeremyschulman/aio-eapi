@@ -42,8 +42,8 @@ make building API modules easier.
 """
 
 from collections.abc import Callable, Mapping
-from pyeapi.eapilib import CommandError
-from pyeapi.utils import make_iterable
+from ..eapilib import CommandError
+from ..utils import make_iterable
 
 
 class BaseEntity(object):
