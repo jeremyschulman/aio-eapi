@@ -72,8 +72,10 @@ class Node(object):
     """
     def __init__(self, connection, **kwargs):
         self._connection = connection
-        self._running_config = None
-        self._startup_config = None
+        self._running_config = self._sync_to_async_(self.get_config, params="all",
+                                                as_string=True) or None
+        self._startup_config = self._sync_to_async_(self.get_config, 'startup-config',
+                                                as_string=True) or None
         self._version = None
         self._version_number = None
         self._model = None
@@ -85,9 +87,6 @@ class Node(object):
         self.autorefresh = kwargs.get('autorefresh', True)
         self.config_defaults = kwargs.get('config_defaults', True)
         self.settings = kwargs
-        
-        self.running_config
-        self.startup_config
 
     def __str__(self):
         return 'Node(connection=%s)' % str(self._connection)
@@ -99,10 +98,7 @@ class Node(object):
         try:
             loop = asyncio.get_event_loop()
             
-            if loop.is_running():
-                return loop.create_task(func(*args, **kwargs)).result()
-            else:
-                loop.run_until_complete(func(*args, **kwargs))
+            return loop.create_task(func(*args, **kwargs)).result()
         except Exception:
             pass
 
