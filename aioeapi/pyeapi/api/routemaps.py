@@ -44,7 +44,7 @@ Notes:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 
 
 class Routemaps(EntityCollection):

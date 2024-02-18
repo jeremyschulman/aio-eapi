@@ -49,7 +49,7 @@ Parameters:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 from ..utils import make_iterable
 
 RD_RE = re.compile(r'(?:\srd\s)(?P<value>.*)$', re.M)

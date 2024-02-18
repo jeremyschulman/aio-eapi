@@ -51,7 +51,7 @@ Parameters:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 from ..utils import make_iterable
 
 VLAN_ID_RE = re.compile(r'(?:vlan\s)(?P<value>.*)$', re.M)

@@ -46,7 +46,7 @@ import re
 
 import netaddr
 
-from api import EntityCollection
+from .abstract import EntityCollection
 from ..utils import ProxyCall
 
 VALID_ACLS = frozenset(['standard', 'extended'])

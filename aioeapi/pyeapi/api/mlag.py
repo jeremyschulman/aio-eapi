@@ -68,7 +68,7 @@ Interface Parameters:
 
 import re
 
-from api import Entity
+from .abstract import Entity
 
 
 class Mlag(Entity):

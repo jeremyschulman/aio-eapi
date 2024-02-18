@@ -55,7 +55,7 @@ Interface Parameters:
 
 import re
 
-from api import Entity, EntityCollection
+from .abstract import Entity, EntityCollection
 
 
 class Stp(Entity):

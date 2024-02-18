@@ -47,7 +47,7 @@ Arguments:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 
 
 class Varp(EntityCollection):

@@ -39,7 +39,7 @@ physical Ethernet and bundled Port-Channel interfaces.
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 from ..utils import make_iterable
 
 

@@ -48,7 +48,7 @@ Parameters:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 from ..utils import _interpolate_docstr
 
 IP_MTU_MIN = 68

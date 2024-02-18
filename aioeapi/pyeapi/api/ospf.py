@@ -37,7 +37,7 @@ OSPF configurations
 """
 
 import re
-from api import Entity
+from .abstract import Entity
 from ..utils import make_iterable
 
 class Ospf(Entity):

@@ -155,7 +155,7 @@ Notes:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 
 PROPERTIES = ['primary_ip', 'priority', 'description', 'secondary_ip',
               'ip_version', 'enable', 'timers_advertise',

@@ -52,7 +52,7 @@ Parameters:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 
 DEFAULT_ENCRYPTION = 'cleartext'
 ENCRYPTION_MAP = {'cleartext': 0, 'md5': 5, 'sha512': 'sha512', 'nologin': '*'}

@@ -38,7 +38,7 @@ from collections import namedtuple
 
 import netaddr
 
-from api import Entity, EntityCollection
+from .abstract import Entity, EntityCollection
 from ..utils import make_iterable
 
 Network = namedtuple('Network', 'prefix length route_map')

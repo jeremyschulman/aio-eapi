@@ -59,7 +59,7 @@ Parameters:
 
 import re
 
-from api import EntityCollection
+from .abstract import EntityCollection
 from ..utils import ProxyCall, CliVariants
 
 MIN_LINKS_RE = re.compile(r'(?<=\s{3}min-links\s)(?P<value>.+)$', re.M)

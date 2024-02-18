@@ -44,7 +44,7 @@ System Attributes:
 
 import re
 
-from api import Entity
+from .abstract import Entity
 
 
 class System(Entity):
