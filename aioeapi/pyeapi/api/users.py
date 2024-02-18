@@ -52,7 +52,7 @@ Parameters:
 
 import re
 
-from pyeapi.api import EntityCollection
+from api import EntityCollection
 
 DEFAULT_ENCRYPTION = 'cleartext'
 ENCRYPTION_MAP = {'cleartext': 0, 'md5': 5, 'sha512': 'sha512', 'nologin': '*'}

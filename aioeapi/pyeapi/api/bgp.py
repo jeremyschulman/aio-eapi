@@ -38,8 +38,8 @@ from collections import namedtuple
 
 import netaddr
 
-from pyeapi.api import Entity, EntityCollection
-from pyeapi.utils import make_iterable
+from api import Entity, EntityCollection
+from ..utils import make_iterable
 
 Network = namedtuple('Network', 'prefix length route_map')
 

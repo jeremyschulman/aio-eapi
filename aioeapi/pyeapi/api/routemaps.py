@@ -44,7 +44,7 @@ Notes:
 
 import re
 
-from pyeapi.api import EntityCollection
+from api import EntityCollection
 
 
 class Routemaps(EntityCollection):

@@ -51,8 +51,8 @@ Parameters:
 
 import re
 
-from pyeapi.api import EntityCollection
-from pyeapi.utils import make_iterable
+from api import EntityCollection
+from ..utils import make_iterable
 
 VLAN_ID_RE = re.compile(r'(?:vlan\s)(?P<value>.*)$', re.M)
 NAME_RE = re.compile(r'(?:name\s)(?P<value>.*)$', re.M)

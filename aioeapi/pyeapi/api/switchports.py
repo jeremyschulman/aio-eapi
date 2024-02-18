@@ -39,8 +39,8 @@ physical Ethernet and bundled Port-Channel interfaces.
 
 import re
 
-from pyeapi.api import EntityCollection
-from pyeapi.utils import make_iterable
+from api import EntityCollection
+from ..utils import make_iterable
 
 
 class Switchports(EntityCollection):

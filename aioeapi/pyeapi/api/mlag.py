@@ -68,7 +68,7 @@ Interface Parameters:
 
 import re
 
-from pyeapi.api import Entity
+from api import Entity
 
 
 class Mlag(Entity):

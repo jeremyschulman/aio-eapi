@@ -48,8 +48,8 @@ Parameters:
 
 import re
 
-from pyeapi.api import EntityCollection
-from pyeapi.utils import _interpolate_docstr
+from api import EntityCollection
+from ..utils import _interpolate_docstr
 
 IP_MTU_MIN = 68
 IP_MTU_MAX = 65535

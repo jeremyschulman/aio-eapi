@@ -55,7 +55,7 @@ Interface Parameters:
 
 import re
 
-from pyeapi.api import Entity, EntityCollection
+from api import Entity, EntityCollection
 
 
 class Stp(Entity):

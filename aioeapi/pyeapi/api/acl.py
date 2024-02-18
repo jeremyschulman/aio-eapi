@@ -46,8 +46,8 @@ import re
 
 import netaddr
 
-from pyeapi.api import EntityCollection
-from pyeapi.utils import ProxyCall
+from api import EntityCollection
+from ..utils import ProxyCall
 
 VALID_ACLS = frozenset(['standard', 'extended'])
 

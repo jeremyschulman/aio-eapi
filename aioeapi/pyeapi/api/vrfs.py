@@ -49,8 +49,8 @@ Parameters:
 
 import re
 
-from pyeapi.api import EntityCollection
-from pyeapi.utils import make_iterable
+from api import EntityCollection
+from ..utils import make_iterable
 
 RD_RE = re.compile(r'(?:\srd\s)(?P<value>.*)$', re.M)
 DESCRIPTION_RE = re.compile(r'(?:description\s)(?P<value>.*)$', re.M)

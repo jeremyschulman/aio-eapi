@@ -37,8 +37,8 @@ OSPF configurations
 """
 
 import re
-from pyeapi.api import Entity
-from pyeapi.utils import make_iterable
+from api import Entity
+from ..utils import make_iterable
 
 class Ospf(Entity):
     """ The Ospf class implements global Ospf router configuration

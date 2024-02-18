@@ -155,7 +155,7 @@ Notes:
 
 import re
 
-from pyeapi.api import EntityCollection
+from api import EntityCollection
 
 PROPERTIES = ['primary_ip', 'priority', 'description', 'secondary_ip',
               'ip_version', 'enable', 'timers_advertise',

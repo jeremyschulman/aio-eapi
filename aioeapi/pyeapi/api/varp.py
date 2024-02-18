@@ -47,7 +47,7 @@ Arguments:
 
 import re
 
-from pyeapi.api import EntityCollection
+from api import EntityCollection
 
 
 class Varp(EntityCollection):

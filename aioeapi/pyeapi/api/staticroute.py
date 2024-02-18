@@ -55,7 +55,7 @@ Notes:
 
 import re
 
-from pyeapi.api import EntityCollection
+from api import EntityCollection
 
 # Define the regex to match ip route lines (by lines in regex):
 #   'ip route' header
