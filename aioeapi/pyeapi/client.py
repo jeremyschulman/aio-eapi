@@ -73,9 +73,7 @@ class Node(object):
     def __init__(self, connection, **kwargs):
         self._connection = connection
         self._running_config = None
-        self.running_config
         self._startup_config = None
-        self.startup_config
         self._version = None
         self._version_number = None
         self._model = None
@@ -87,6 +85,9 @@ class Node(object):
         self.autorefresh = kwargs.get('autorefresh', True)
         self.config_defaults = kwargs.get('config_defaults', True)
         self.settings = kwargs
+        
+        self.running_config
+        self.startup_config
 
     def __str__(self):
         return 'Node(connection=%s)' % str(self._connection)
