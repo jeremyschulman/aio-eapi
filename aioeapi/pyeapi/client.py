@@ -507,7 +507,7 @@ class Node(object):
                 
             return response
 
-    def api(self, name, namespace='aioeapi.pyeapi.api'):
+    def api(self, name, namespace='.pyeapi.api'):
         """Loads the specified api module
 
         This method is the API autoload mechanism that will load the API
