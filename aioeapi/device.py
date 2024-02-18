@@ -92,7 +92,7 @@ class Device(httpx.AsyncClient):
             used to create a BasicAuth instance.
         """
 
-        self.node = Node(dev=self)
+        self.node = Node(None, dev=self)
 
         self.port = port or getservbyname(proto)
         self.host = host
