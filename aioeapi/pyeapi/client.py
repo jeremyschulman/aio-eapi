@@ -72,10 +72,10 @@ class Node(object):
     """
     def __init__(self, connection, **kwargs):
         self._connection = connection
-        self._running_config = self._sync_to_async_(self.get_config, params="all",
-                                                as_string=True) or None
-        self._startup_config = self._sync_to_async_(self.get_config, 'startup-config',
-                                                as_string=True) or None
+        self._running_config = self._sync_to_async_(self.get_config(params="all",
+                                                as_string=True)) or None
+        self._startup_config = self._sync_to_async_(self.get_config('startup-config',
+                                                as_string=True)) or None
         self._version = None
         self._version_number = None
         self._model = None
@@ -94,11 +94,11 @@ class Node(object):
     def __repr__(self):
         return 'Node(connection=%s)' % repr(self._connection)
 
-    def _sync_to_async_(func, *args, **kwargs):
+    def _sync_to_async_(func):
         try:
             loop = asyncio.get_event_loop()
             
-            return loop.create_task(func(*args, **kwargs)).result()
+            return loop.run_until_complete(func)
         except Exception:
             pass
 
@@ -114,16 +114,16 @@ class Node(object):
         if self._running_config is not None:
             return self._running_config
         params = 'all' if self.config_defaults else None
-        self._running_config = self._sync_to_async_(self.get_config, params=params,
-                                                as_string=True)
+        self._running_config = self._sync_to_async_(self.get_config(params=params,
+                                                as_string=True))
         return self._running_config
 
     @property
     def startup_config(self):
         if self._startup_config is not None:
             return self._startup_config
-        self._startup_config = self._sync_to_async_(self.get_config, 'startup-config',
-                                                as_string=True)
+        self._startup_config = self._sync_to_async_(self.get_config('startup-config',
+                                                as_string=True))
         return self._startup_config
 
     @property
