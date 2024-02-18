@@ -100,7 +100,7 @@ class Node(object):
             loop = asyncio.get_event_loop()
             
             if loop.is_running():
-                loop.create_task(func(*args, **kwargs))
+                return loop.create_task(func(*args, **kwargs)).result()
             else:
                 loop.run_until_complete(func(*args, **kwargs))
         except Exception:
@@ -118,16 +118,16 @@ class Node(object):
         if self._running_config is not None:
             return self._running_config
         params = 'all' if self.config_defaults else None
-        self._running_config = self._sync_to_async_(self.get_config(params=params,
-                                                as_string=True))
+        self._running_config = self._sync_to_async_(self.get_config, params=params,
+                                                as_string=True)
         return self._running_config
 
     @property
     def startup_config(self):
         if self._startup_config is not None:
             return self._startup_config
-        self._startup_config = self._sync_to_async_(self.get_config('startup-config',
-                                                as_string=True))
+        self._startup_config = self._sync_to_async_(self.get_config, 'startup-config',
+                                                as_string=True)
         return self._startup_config
 
     @property
