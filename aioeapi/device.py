@@ -54,7 +54,6 @@ class Device(httpx.AsyncClient):
         password: Optional[str] = None,
         proto: Optional[str] = "https",
         port=None,
-        timeout: Optional[int] = 60,
         **kwargs,
     ):
         """
