@@ -566,9 +566,9 @@ class Node(object):
 
         result = await self.run_commands(command, 'text')
         if as_string:
-            return str(result[0]['output']).strip()
+            return str(result[0]).strip()
 
-        return str(result[0]['output']).split('\n')
+        return str(result[0]).split('\n')
 
     def refresh(self):
         """Refreshes the instance config properties
