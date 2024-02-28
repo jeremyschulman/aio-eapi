@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "aio-eapi"
-version = "0.6.3"
+version = "0.6.4"
 description = "Arista EOS API asyncio client"
 readme = "README.md"
-authors = ["Jeremy Schulman"]
+authors = ["Jeremy Schulman", "Ryan Hamel"]
 packages = [
     { include  = 'aioeapi' },
 ]
@@ -11,6 +11,8 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.8"
 httpx = "^0.23.3"
+netaddr = "^1.2.1"
+ujson = "^5.9.0"
 
 
 [tool.poetry.dev-dependencies]

@@ -18,6 +18,7 @@ import httpx
 from .aio_portcheck import port_check_url
 from .errors import EapiCommandError
 from .config_session import SessionConfig
+from .pyeapi.client import Node
 
 # -----------------------------------------------------------------------------
 # Exports
@@ -42,6 +43,7 @@ class Device(httpx.AsyncClient):
     """
 
     auth = None
+    node = None
     EAPI_OFMT_OPTIONS = ("json", "text")
     EAPI_DEFAULT_OFMT = "json"
 
@@ -88,6 +90,8 @@ class Device(httpx.AsyncClient):
             not provided, then username+password is assumed by the Caller and
             used to create a BasicAuth instance.
         """
+
+        self.node = Node(None, dev=self)
 
         self.port = port or getservbyname(proto)
         self.host = host
