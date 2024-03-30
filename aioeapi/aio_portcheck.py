@@ -29,7 +29,7 @@ __all__ = ["port_check_url"]
 async def port_check_url(url: URL, timeout: Optional[int] = 5) -> bool:
     """
     This function attempts to open the port designated by the URL given the
-    timeout in seconds.  If the port is avaialble then return True; False
+    timeout in seconds.  If the port is available then return True; False
     otherwise.
 
     Parameters
@@ -37,7 +37,7 @@ async def port_check_url(url: URL, timeout: Optional[int] = 5) -> bool:
     url:
         The URL that provides the target system
 
-    timeout: optional, default is 5 seonds
+    timeout: optional, default is 5 seconds
         Time to await for the port to open in seconds
     """
     port = url.port or socket.getservbyname(url.scheme)
