@@ -4,20 +4,20 @@ This repository contains an Arista EOS asyncio client.
 
 ### Quick Example
 
-Thie following shows how to create a Device instance and run a list of
+This following shows how to create a Device instance and run a list of
 commands.
 
-Device will use HTTPS transport by default.  The Device instance supports the
+Device will use HTTPS transport by default. The Device instance supports the
 following initialization parameters:
 
-   * `host` - The device hostname or IP address
-   * `username` - The login username
-   * `password` - The login password
-   * `proto` - *(Optional)* Choose either "https" or "http", defaults to "https"
-   * `port` - *(Optional)* Chose the protocol port to override proto default
+- `host` - The device hostname or IP address
+- `username` - The login username
+- `password` - The login password
+- `proto` - _(Optional)_ Choose either "https" or "http", defaults to "https"
+- `port` - _(Optional)_ Chose the protocol port to override proto default
 
-The Device class inherits directly from httpx.AsyncClient.  As such, the Caller
-can provide any initialization parameters.  The above specific parameters are
+The Device class inherits directly from httpx.AsyncClient. As such, the Caller
+can provide any initialization parameters. The above specific parameters are
 all optional.
 
 ```python
@@ -35,9 +35,8 @@ async def run_test(host):
 
 ### References
 
-Arista eAPI documents require an Arista Portal customer login.  Once logged into the
-system you can find the documents in the Software Download area.  Select an EOS release
+Arista eAPI documents require an Arista Portal customer login. Once logged into the
+system you can find the documents in the Software Download area. Select an EOS release
 and then select the Docs folder.
 
 You can also take a look at the Arista community client, [here](https://github.com/arista-eosplus/pyeapi).
-

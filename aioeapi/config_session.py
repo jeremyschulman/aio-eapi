@@ -24,7 +24,7 @@ class SessionConfig:
     """
     The SessionConfig instance is used to send configuration to a device using
     the EOS session mechanism.  This is the preferred way of managing
-    configuraiton changes.
+    configuration changes.
 
     Notes
     -----
@@ -96,7 +96,7 @@ class SessionConfig:
         Dict instance of the session status.  If the session does not exist,
         then this method will return None.
 
-        The native eAPI results from JSON output, see exmaple:
+        The native eAPI results from JSON output, see example:
 
         Examples
         --------
@@ -137,7 +137,7 @@ class SessionConfig:
     ):
         """
         Sends the configuration content to the device.  If `replace` is true,
-        then the command "rollback clean-config" is issued before sendig the
+        then the command "rollback clean-config" is issued before sending the
         configuration content.
 
         Parameters
@@ -145,7 +145,7 @@ class SessionConfig:
         content: Union[List[str], str]
             The text configuration CLI commands, as a list of strings, that
             will be sent to the device.  If the parameter is a string, and not
-            a list, then split the string across linebreaks.  In either case
+            a list, then split the string across line breaks.  In either case
             any empty lines will be discarded before they are send to the
             device.
 
@@ -227,7 +227,7 @@ class SessionConfig:
         ----------
         filename:
             The name of the configuration file.  The caller is required to
-            specify the filesystem, for exmaple, the
+            specify the filesystem, for example, the
             filename="flash:thisfile.cfg"
 
         replace:

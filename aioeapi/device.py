@@ -56,7 +56,7 @@ class Device(httpx.AsyncClient):
     ):
         """
         Initializes the Device class.  As a subclass to httpx.AsyncClient, the
-        Caller can provide any of those initializers.  Specific paramertes for
+        Caller can provide any of those initializers.  Specific parameters for
         Device class are all optional and described below.
 
         Parameters
@@ -76,7 +76,7 @@ class Device(httpx.AsyncClient):
         port: Optional[Union[str,int]]
             If not provided, the proto value is used to look up the associated
             port (http=80, https=443).  If provided, overrides the port used to
-            communite with the device.
+            communicate with the device.
 
         Other Parameters
         ----------------
@@ -106,7 +106,7 @@ class Device(httpx.AsyncClient):
         """
         This function checks the target device to ensure that the eAPI port is
         open and accepting connections.  It is recommended that a Caller checks
-        the connection before involing cli commands, but this step is not
+        the connection before involving cli commands, but this step is not
         required.
 
         Returns
@@ -136,7 +136,7 @@ class Device(httpx.AsyncClient):
             A list of commands to execute; results in a list of output responses
 
         ofmt: str
-            Either 'json' or 'text'; indicates the output fromat for the CLI commands.
+            Either 'json' or 'text'; indicates the output format for the CLI commands.
 
         suppress_error: Optional[bool] = False
             When not False, then if the execution of the command would-have
@@ -152,13 +152,13 @@ class Device(httpx.AsyncClient):
             By default the eAPI will use "version 1" for all API object models.
             This driver will, by default, always set version to "latest" so
             that the behavior matches the CLI of the device.  The caller can
-            override the "latest" behavior by explicity setting the version.
+            override the "latest" behavior by explicitly setting the version.
 
 
         Other Parameters
         ----------------
         autoComplete: Optional[bool] = False
-            Enabled/disables the command auto-compelete feature of the EAPI.  Per the
+            Enabled/disables the command auto-complete feature of the EAPI.  Per the
             documentation:
                 Allows users to use shorthand commands in eAPI calls. With this
                 parameter included a user can send 'sh ver' via eAPI to get the
@@ -175,7 +175,7 @@ class Device(httpx.AsyncClient):
 
         Returns
         -------
-        One or List of output respones, per the description above.
+        One or List of output responses, per the description above.
         """
         if not any((command, commands)):
             raise RuntimeError("Required 'command' or 'commands'")
@@ -233,7 +233,7 @@ class Device(httpx.AsyncClient):
         Returns
         -------
         The list of command results; either dict or text depending on the
-        JSON-RPC format pameter.
+        JSON-RPC format parameter.
         """
         res = await self.post("/command-api", json=jsonrpc)
         res.raise_for_status()
