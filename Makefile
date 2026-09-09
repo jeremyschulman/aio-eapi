@@ -24,3 +24,9 @@ clean:
 	rm -f requirements.txt setup.py
 	rm -f poetry.lock
 	find . -name '__pycache__' | xargs rm -rf
+
+test:
+	poetry run pytest tests/ -v
+
+test-cov:
+	pytest --cov=aioeapi --cov-report=html
