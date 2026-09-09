@@ -261,7 +261,7 @@ class Device(httpx.AsyncClient):
         # is guaranteed to have the following attributes: code, messages, and
         # data. Similar to the result object in the successful response, the
         # data object is a list of objects corresponding to the results of all
-        # commands up to, and including, the failed command. If there was a an
+        # commands up to, and including, the failed command. If there was an
         # error before any commands were executed (e.g. bad credentials), data
         # will be empty. The last object in the data array will always
         # correspond to the failed command. The command failure details are
@@ -271,10 +271,16 @@ class Device(httpx.AsyncClient):
         len_data = len(cmd_data)
         err_at = len_data - 1
         err_msg = err_data["message"]
+        failed_cmd = commands[err_at]
+        if isinstance(failed_cmd, dict):
+            failed_cmd = failed_cmd["cmd"]
 
         raise EapiCommandError(
-            passed=[get_output(cmd_data[cmd_i]) for cmd_i, cmd in enumerate(commands[:err_at])],
-            failed=commands[err_at]["cmd"],
+            passed=[
+                get_output(cmd_data[cmd_i])
+                for cmd_i, cmd in enumerate(commands[:err_at])
+            ],
+            failed=failed_cmd,
             errors=cmd_data[err_at]["errors"],
             errmsg=err_msg,
             not_exec=commands[err_at + 1 :],

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aio-eapi"
-version = "0.6.3"
+version = "0.7.0"
 description = "Arista EOS API asyncio client"
 readme = "README.md"
 authors = ["Jeremy Schulman"]
@@ -10,10 +10,10 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-httpx = ">=0.23.3"
+httpx = ">=0.28.0"
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
     pytest = "*"
     invoke = "*"
     black = "*"
